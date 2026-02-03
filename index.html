@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Plant Analyzer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e6f4ea;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      color: #2e7d32;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 350px;
+    }
+    input[type="file"] {
+      margin: 15px 0;
+    }
+    button {
+      background: #388e3c;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #2e7d32;
+    }
+    img {
+      max-width: 300px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+    #result {
+      background: #fff;
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 20px;
+      width: 80%;
+      max-width: 600px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .loading {
+      color: #555;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌿 Smart Plant Analyzer</h1>
+
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="plantImage" accept="image/*" required>
+    <button type="submit">Analyze Plant</button>
+  </form>
+
+  <div id="preview"></div>
+  <div id="result"></div>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const resultDiv = document.getElementById('result');
+    const previewDiv = document.getElementById('preview');
+
+    form.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (file) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        previewDiv.innerHTML = "";
+        previewDiv.appendChild(img);
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      resultDiv.innerHTML = "<p class='loading'>Analyzing... Please wait.</p>";
+
+      const res = await fetch('analyze.php', {
+        method: 'POST',
+        body: data
+      });
+
+      const json = await res.json();
+
+      if (json.error) {
+        resultDiv.innerHTML = `<p style="color:red">${json.error}</p>`;
+      } else {
+        resultDiv.innerHTML = `
+          <h2>Plant Report</h2>
+          <p><strong>Plant Name:</strong> ${json.plant_name}</p>
+          <p><strong>Botanical Name:</strong> ${json.botanical_name}</p>
+          <p><strong>Uses:</strong> ${json.uses}</p>
+          <p><strong>Health Status:</strong> ${json.health_status}</p>
+          <p><strong>Disease Name:</strong> ${json.disease_name}</p>
+          <p><strong>Solution:</strong> ${json.solution}</p>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>
