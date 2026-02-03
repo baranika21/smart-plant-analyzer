@@ -34,5 +34,6 @@ This project requires API keys for Plant.id and OpenAI to work.
 1. Create a file named `.env` in the project root (same folder as `analyze.php`).
 2. Add the following lines, replacing with your own API keys:
 PLANT_ID_API_KEY=your-plant-id-api-key-here
+
 OPENAI_API_KEY=your-openai-api-key-here
-3. Save the file. The `.env` file is **ignored by Git** for security.
+4. Save the file. The `.env` file is **ignored by Git** for security.
